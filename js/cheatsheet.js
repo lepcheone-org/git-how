@@ -78,6 +78,10 @@
   }
   build();
   $("btn-cheat").addEventListener("click", open);
+  const tabs = { commands: [$("tab-commands"), $("cheat-page")], account: [$("tab-account"), $("acct-page")] };
+  Object.entries(tabs).forEach(([name, [tab]]) => tab.addEventListener("click", () => {
+    Object.entries(tabs).forEach(([n, [t, panel]]) => { t.setAttribute("aria-selected", String(n === name)); panel.hidden = n !== name; });
+  }));
   $("cheat-close").addEventListener("click", close);
   $("cheat-print").addEventListener("click", () => window.print());
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !overlay.hidden) close(); });

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>Which GitHub account am I using? Cheat sheet</title>
+<style>
+  :root {
+    color-scheme: light;
+    --cp-bg: #f7f4ef; --cp-bg-elevated: #fcfbf8; --cp-surface: #ffffff; --cp-surface-soft: #f5f5f5;
+    --cp-border: #dedede; --cp-border-strong: #919191; --cp-text: #242424; --cp-text-muted: #5c5c5c; --cp-text-soft: #3f3f3f;
+    --cp-accent: #b11f4b; --cp-accent-soft: rgba(177, 31, 75, 0.08); --cp-accent-fg: #ffffff;
+    --cp-success: #16a34a; --cp-danger: #dc2626; --cp-warning: #b45309;
+    --c-author: #2563eb; --c-push: #16a34a; --c-copilot: #9333ea; --c-warn: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--cp-bg); color: var(--cp-text); font-family: "Segoe UI", Aptos, Calibri, sans-serif; font-size: 15px; line-height: 1.4; }
+  code, .cmd { font-family: Consolas, "Courier New", monospace; }
+  .sheet { width: 1400px; padding: 28px 32px 24px; }
+  h1 { margin: 0; font-size: 32px; line-height: 1.15; }
+  .sub { color: var(--cp-text-muted); font-size: 16px; margin: 4px 0 16px; }
+  .rule { display: flex; gap: 10px; margin-bottom: 16px; }
+  .rule div { flex: 1; background: var(--cp-accent-soft); border: 1px solid var(--cp-accent); border-radius: 10px; padding: 8px 12px; font-size: 14px; }
+  .rule b { color: var(--cp-accent); }
+
+  .cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px; }
+  .cols2 { display: grid; grid-template-columns: 1.1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .card { background: var(--cp-surface); border: 1px solid var(--cp-border); border-top: 6px solid var(--k); border-radius: 12px; padding: 12px 14px 12px; }
+  .card h2 { margin: 0 0 2px; font-size: 18px; color: var(--k); line-height: 1.2; }
+  .card .what { margin: 0 0 8px; color: var(--cp-text-muted); font-size: 13.5px; }
+  .a { --k: var(--c-author); } .p { --k: var(--c-push); } .c { --k: var(--c-copilot); } .w { --k: var(--c-warn); } .m { --k: var(--cp-accent); }
+  .row { margin: 0 0 7px; }
+  .cmd { display: block; background: var(--cp-surface-soft); border: 1px solid var(--cp-border); border-radius: 6px; padding: 3px 8px; font-size: 13.5px; font-weight: 600; margin-bottom: 2px; overflow-wrap: anywhere; }
+  .exp { font-size: 13px; color: var(--cp-text-soft); }
+  .exp b { color: var(--cp-text); }
+  .note { margin-top: 6px; padding: 5px 9px; border-left: 4px solid var(--k); background: var(--cp-surface-soft); border-radius: 0 6px 6px 0; font-size: 13px; }
+  ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  ol.steps li { counter-increment: s; position: relative; padding-left: 32px; margin-bottom: 7px; }
+  ol.steps li::before { content: counter(s); position: absolute; left: 0; top: 1px; width: 22px; height: 22px; border-radius: 50%; background: var(--cp-accent); color: var(--cp-accent-fg); font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cp-text-muted); padding: 3px 6px; border-bottom: 2px solid var(--cp-border-strong); }
+  td { padding: 5px 6px; border-bottom: 1px solid var(--cp-border); vertical-align: top; }
+  td code { font-weight: 600; font-size: 13px; }
+  .tag { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 1px 8px; border-radius: 999px; color: #fff; }
+  .t-push { background: var(--c-push); } .t-chat { background: var(--c-copilot); } .t-work { background: var(--cp-warning); }
+  .foot { margin-top: 10px; color: var(--cp-text-muted); font-size: 12.5px; display: flex; justify-content: space-between; gap: 20px; }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <h1>Which GitHub account am I using?</h1>
+  <p class="sub">One-page check before you push, and for Copilot chat. Three <b>separate</b> things are all called "my account". Check each one on its own.</p>
+
+  <div class="rule">
+    <div><b>Rule 1.</b> The <b>active login</b> decides who pushes. The email in <code>git config</code> does not.</div>
+    <div><b>Rule 2.</b> Pushing and Copilot chat are <b>independent</b>. Changing one never changes the other.</div>
+    <div><b>Rule 3.</b> Open a new terminal? Check again. A background variable may switch you back.</div>
+  </div>
+
+  <div class="cols3">
+    <section class="card a">
+      <h2>1. Commit author</h2>
+      <p class="what">Who each commit is <b>labelled</b> as. A label only. It grants no access.</p>
+      <div class="row"><span class="cmd">git config user.name</span><span class="cmd">git config user.email</span><span class="exp">Shows the name and email Git will stamp on your next commit. Run it <b>inside the repo folder</b>.</span></div>
+      <div class="row"><span class="cmd">git log -1 --format="%an &lt;%ae&gt;"</span><span class="exp">Who the <b>latest commit</b> says it is from.</span></div>
+      <div class="row"><span class="cmd">git config --global --list</span><span class="exp">Everything set for your whole Windows user.</span></div>
+      <div class="note"><b>Change for this repo only:</b> run <code>git config user.email "you@x.com"</code> inside the repo (leave out <code>--global</code>).</div>
+    </section>
+
+    <section class="card p">
+      <h2>2. Push login (terminal)</h2>
+      <p class="what">Who <b>actually uploads</b> when you run <code>git push</code>. This is the one that matters.</p>
+      <div class="row"><span class="cmd">gh auth status</span><span class="exp">Lists every login. The one marked <b>Active account: true</b> is used. Plain <code>gh</code> only shows help.</span></div>
+      <div class="row"><span class="cmd">gh api user --jq .login</span><span class="exp">Prints just the <b>active account name</b>. The quickest check.</span></div>
+      <div class="row"><span class="cmd">git remote -v</span><span class="exp">Shows <b>where</b> it will push. The URL is <code>github.com/OWNER/REPO</code>.</span></div>
+      <div class="row"><span class="cmd">gh api repos/OWNER/REPO --jq .permissions</span><span class="exp"><b>"push": true</b> means this account may upload there.</span></div>
+      <div class="note"><b>Switch active login:</b> <code>gh auth switch --user YOUR-PERSONAL-USERNAME</code></div>
+    </section>
+
+    <section class="card c">
+      <h2>3. Copilot chat (VS Code)</h2>
+      <p class="what">Which account powers the <b>chat panel</b>. Has nothing to do with pushing.</p>
+      <div class="row"><span class="cmd">Accounts icon (person), bottom-left</span><span class="exp">Lists every account VS Code is signed in to.</span></div>
+      <div class="row"><span class="cmd">Click an account &gt; Manage Trusted Extensions</span><span class="exp">If <b>GitHub Copilot Chat</b> is ticked for that account, chat uses it.</span></div>
+      <div class="row"><span class="cmd">Copilot icon, bottom-right status bar</span><span class="exp">Shows Copilot status and usage for the signed-in account.</span></div>
+      <div class="note"><b>Change it:</b> Accounts icon &gt; the account &gt; <b>Sign Out</b>, then sign in to the one you want when Copilot asks. Menu wording can vary a little by VS Code version.</div>
+    </section>
+  </div>
+
+  <div class="cols2">
+    <section class="card m">
+      <h2>Before every push: 5-step check</h2>
+      <p class="what">Takes 20 seconds. Run in the VS Code terminal, inside the project folder.</p>
+      <ol class="steps">
+        <li><span class="cmd">git status</span><span class="exp">Right folder and branch? Anything unexpected staged?</span></li>
+        <li><span class="cmd">git remote -v</span><span class="exp">Is the URL the <b>right org and repo</b>?</span></li>
+        <li><span class="cmd">gh api user --jq .login</span><span class="exp">Does it print <b>your personal username</b>?</span></li>
+        <li><span class="cmd">gh api repos/OWNER/REPO --jq .permissions</span><span class="exp">Is <b>"push": true</b>?</span></li>
+        <li><span class="cmd">git push -u origin main</span><span class="exp">Only now. <code>-u</code> is needed just the first time for a branch.</span></li>
+      </ol>
+    </section>
+
+    <section class="card m">
+      <h2>Write down your own accounts</h2>
+      <p class="what">Fill these in for yourself. The accounts can all be different people or roles.</p>
+      <table>
+        <thead><tr><th>Account</th><th>Use it for</th></tr></thead>
+        <tbody>
+          <tr><td><code>YOUR-PERSONAL-USERNAME</code> <span class="tag t-push">PUSH</span></td><td>Personal. Use for pushes to your own repos or org. Commits use your name and the email on this account.</td></tr>
+          <tr><td><code>YOUR-COPILOT-ACCOUNT</code> <span class="tag t-chat">CHAT</span></td><td>The account you sign in with for <b>Copilot chat</b> in VS Code. It does not have to be the one you push with.</td></tr>
+          <tr><td><code>YOUR-WORK-ACCOUNT</code> <span class="tag t-work">WORK</span></td><td>Work account. Keep it away from personal projects. Watch for a <code>GH_TOKEN</code> that points at it.</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><b>Add / remove a login:</b> <code>gh auth login</code> &nbsp;|&nbsp; <code>gh auth logout --user NAME</code>. When logging in, check the browser avatar says the account you want <b>before</b> you click Authorize.</div>
+    </section>
+</div>
+
+  <section class="card w" style="margin-bottom:14px">
+    <h2>The GH_TOKEN trap (this caught us once)</h2>
+    <p class="what">A Windows variable called <code>GH_TOKEN</code> overrides every stored login. If it is set, you push as <b>whoever owns that token</b>, whatever else you switch.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+      <div class="row"><b>How to spot it</b><span class="exp" style="display:block">In <code>gh auth status</code>, the active account says <b>(GH_TOKEN)</b> instead of <b>(keyring)</b>.</span></div>
+      <div class="row"><b>Where is it set? (prints True/False only)</b><span class="cmd" style="font-size:12px">foreach ($s in 'Process','User','Machine') { "{0}: {1}" -f $s, ($null -ne [Environment]::GetEnvironmentVariable('GH_TOKEN',$s)) }</span></div>
+      <div class="row"><b>Fix for this terminal only</b><span class="cmd">Remove-Item Env:GH_TOKEN</span><span class="exp">Comes back in every <b>new</b> terminal. Removing it for good (Windows "Environment Variables") may break other tools, so only do it if you know nothing needs it.</span></div>
+    </div>
+  </section>
+
+  <section class="card w">
+    <h2>Something went wrong? Symptom, cause, fix</h2>
+    <table>
+      <thead><tr><th style="width:28%">What you see</th><th style="width:30%">Likely cause</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td><code>Permission denied to ACCOUNT</code> or <code>403</code></td><td>The active login is the wrong account, or has no access</td><td><code>gh auth switch --user YOUR-PERSONAL-USERNAME</code>, or clear <code>GH_TOKEN</code>, then check step 3 and 4 above</td></tr>
+        <tr><td><code>Repository not found</code></td><td>Wrong URL in <code>origin</code>, or this account cannot see the repo</td><td><code>git remote -v</code> and check the spelling. Change it with <code>git remote set-url origin URL</code></td></tr>
+        <tr><td>A login pop-up asks for username or password</td><td>Git is not using the <code>gh</code> login</td><td><code>gh auth setup-git</code>, then try again. Never type a token into a random prompt</td></tr>
+        <tr><td>Commit shows the wrong name or email on GitHub</td><td>Commit identity is wrong (section 1)</td><td>Fix <code>user.email</code>. For the <b>last unpushed</b> commit only: <code>git commit --amend --reset-author --no-edit</code></td></tr>
+        <tr><td><code>GH007 ... would publish a private email</code></td><td>GitHub is hiding your email</td><td>Use the <b>noreply</b> email from GitHub Settings &gt; Emails in <code>git config user.email</code>, and amend the commit as above</td></tr>
+        <tr><td><code>rejected ... fetch first</code></td><td>GitHub has commits you do not</td><td><code>git pull</code>, then <code>git push</code>. Do not force-push</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="foot">
+    <span>Never paste a token (it looks like <code>gho_...</code> or <code>ghp_...</code>) into chat, files or commits. <code>gh auth status</code> hides it for you.</span>
+    <span>Git, Visualized project notes</span>
+  </div>
+</div>
+</body>
+</html>

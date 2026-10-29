@@ -26,6 +26,7 @@
 16. [Appendix A: Commit this project and publish it with GitHub Pages](#appendix-a-commit-this-project-and-publish-it-with-github-pages)
 17. [Appendix B: Every terminal command used while building](#appendix-b-every-terminal-command-used-while-building)
 18. [Appendix C: Glossary](#appendix-c-glossary)
+19. [Appendix D: Changes after the first publish](#appendix-d-changes-after-the-first-publish)
 
 ---
 
@@ -202,6 +203,10 @@ A "Play full story" idea: run the whole lifecycle as a narrated walkthrough (cre
 git-how/
 |-- index.html                  Page structure, theme bootstrap, script tags, overlays
 |-- style.css                   All styling: themes, layout, animations, print styles
+|-- README.md                   Project overview for GitHub visitors
+|-- assets/
+|   |-- github-account-cheatsheet.html   Source of the account-check cheat sheet
+|   `-- github-account-cheatsheet.png    Image shown in the Cheat sheets overlay
 |-- GIT-VISUALIZER-DESIGN-PLANNING-AND-BUILD-GUIDE.md   (this document)
 `-- js/
     |-- core.js                 The simulated Git engine: state, commits, merge, rebase, push, fetch, CI
@@ -469,7 +474,7 @@ git init
 Why: the page skeleton. Contents, from top to bottom:
 
 * `<head>`: UTF-8, viewport, title, the **theme bootstrap script** (runs before paint), link to `style.css`.
-* Top bar: logo, title, **Quiz**, **Cheat sheet**, **Reset sandbox** buttons and the **dark/light switch**.
+* Top bar: logo, title, **Quiz**, **Cheat sheets**, **Reset sandbox** buttons and the **dark/light switch**.
 * "New to Git? Start here" strip with the three-step explanation, **Jump to the sandbox** link and a **glossary** (`<details>`).
 * **Git vs GitHub** card (`<details open>`).
 * **WATCH** card with the four zones (`z-wd`, `z-stage`, `z-local`, `z-remote`) and the arrows between them (`l-wd-stage`, `l-stage-local`, `l-push`, `l-fetch`).
@@ -516,7 +521,7 @@ The element **ids** are used by the JavaScript. Do not rename them.
     </div>
     <div class="topbar-actions">
       <button id="btn-quiz" class="btn" type="button">Quiz</button>
-      <button id="btn-cheat" class="btn" type="button">Cheat sheet</button>
+      <button id="btn-cheat" class="btn" type="button">Cheat sheets</button>
       <button id="btn-reset" class="btn" type="button">Reset sandbox</button>
       <label class="switch" title="Switch between dark and light theme">
         <input type="checkbox" id="theme-toggle" role="switch" aria-label="Use light theme">
@@ -694,12 +699,19 @@ The element **ids** are used by the JavaScript. Do not rename them.
 
   <footer class="foot">Everything here is a simulation. Nothing touches your real files or your real GitHub account.</footer>
 
-  <div id="cheatsheet" class="cheat-overlay" role="dialog" aria-modal="true" aria-labelledby="cheat-title" hidden>
+  <div id="cheatsheet" class="cheat-overlay" role="dialog" aria-modal="true" aria-label="Cheat sheets" hidden>
     <div class="cheat-bar">
-      <span>Cheat sheet: print it or keep it open while you practise</span>
+      <div class="cheat-tabs" role="tablist" aria-label="Cheat sheets">
+        <button type="button" class="tab" role="tab" id="tab-commands" aria-selected="true" aria-controls="cheat-page">Commands</button>
+        <button type="button" class="tab" role="tab" id="tab-account" aria-selected="false" aria-controls="acct-page">Which GitHub account am I using?</button>
+      </div>
       <div><button id="cheat-print" class="btn primary" type="button">Print</button> <button id="cheat-close" class="btn" type="button">Close</button></div>
     </div>
-    <article class="cheat-page" id="cheat-page"></article>
+    <article class="cheat-page" id="cheat-page" role="tabpanel" aria-labelledby="tab-commands"></article>
+    <article class="cheat-page acct-page" id="acct-page" role="tabpanel" aria-labelledby="tab-account" hidden>
+      <p class="acct-intro">Confused about which GitHub account you are signed in to, for pushing or for Copilot chat? Use this page. <a href="assets/github-account-cheatsheet.png" target="_blank" rel="noopener">Open the image full size</a>.</p>
+      <img src="assets/github-account-cheatsheet.png" alt="One-page cheat sheet: how to check which GitHub account is used for commits (git config), for pushing (gh auth status, gh api user, git remote -v), and for Copilot chat in VS Code (Accounts menu). Includes a 5-step check before every push, the GH_TOKEN problem, and a troubleshooting table.">
+    </article>
   </div>
 
   <div id="quiz" class="cheat-overlay" role="dialog" aria-modal="true" aria-labelledby="quiz-title" hidden>
@@ -1184,6 +1196,12 @@ body.busy .act, body.busy .suggest .chip { pointer-events: none; opacity: 0.6; }
   background: var(--cp-bg-elevated); border-bottom: 1px solid var(--cp-border); padding: 10px 20px; font-weight: 600;
 }
 .cheat-page { max-width: 1100px; margin: 16px auto 40px; padding: 24px 28px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 16px; }
+.cheat-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.cheat-page[hidden] { display: none; }
+.acct-page { max-width: 1100px; }
+.acct-page img { display: block; width: 100%; height: auto; border: 1px solid var(--cp-border); border-radius: 8px; }
+.acct-intro { margin: 0 0 12px; color: var(--cp-text-soft); }
+.acct-intro a { color: var(--cp-link); }
 .cs-head h1 { font-size: 1.6rem; margin: 0; }
 .cs-head p { color: var(--cp-text-muted); margin-bottom: 14px; }
 .cs-flow { display: flex; align-items: stretch; gap: 6px; margin-bottom: 8px; }
@@ -1216,6 +1234,7 @@ body.busy .act, body.busy .suggest .chip { pointer-events: none; opacity: 0.6; }
   body.cheat-open > *:not(#cheatsheet) { display: none !important; }
   body.cheat-open .cheat-overlay { position: static; overflow: visible; background: none; }
   body.cheat-open .cheat-bar { display: none; }
+  body.cheat-open .acct-intro { display: none; }
   body.cheat-open .cheat-page { max-width: none; margin: 0; padding: 0; border: none; }
   .cs-sec td { padding: 2px 4px 2px 0; }
 }
@@ -3702,6 +3721,10 @@ Why: builds the printable cheat sheet from the command list and opens/closes it.
   }
   build();
   $("btn-cheat").addEventListener("click", open);
+  const tabs = { commands: [$("tab-commands"), $("cheat-page")], account: [$("tab-account"), $("acct-page")] };
+  Object.entries(tabs).forEach(([name, [tab]]) => tab.addEventListener("click", () => {
+    Object.entries(tabs).forEach(([n, [t, panel]]) => { t.setAttribute("aria-selected", String(n === name)); panel.hidden = n !== name; });
+  }));
   $("cheat-close").addEventListener("click", close);
   $("cheat-print").addEventListener("click", () => window.print());
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !overlay.hidden) close(); });
@@ -4086,7 +4109,7 @@ Open `index.html` in your browser (double-click it, or `Start-Process .\index.ht
 
 ### 9.1 What you should see on first load
 
-* A top bar "Git, visualized" with **Quiz**, **Cheat sheet**, **Reset sandbox** and a **Dark** switch.
+* A top bar "Git, visualized" with **Quiz**, **Cheat sheets**, **Reset sandbox** and a **Dark** switch.
 * "New to Git? Start here", then a "Git vs GitHub" card.
 * "WATCH: Where your work lives": four boxes. The first three are dimmed and say "No repository yet"; the GitHub box says "No repository on GitHub yet".
 * "TRY IT YOURSELF: Interactive sandbox" with 17 numbered scenario chips plus "Free play", Scenario 1 selected, its checklist, and Step 1 saying "You are at the very beginning...".
@@ -4100,7 +4123,7 @@ Open `index.html` in your browser (double-click it, or `Start-Process .\index.ht
 3. Setup tab: click **git config**. Expect a green **Right choice**, the first checklist item ticked.
 4. Click **New repo on GitHub**, then **git clone**. Boxes fill, a chip flies from GitHub to the local box, the commit chart shows one commit, the checklist completes and "Scenario complete!" appears with a **Next** button.
 5. Toggle **Dark/Light**. Reload: the choice persists.
-6. Open **Cheat sheet**, press **Print**: only the sheet prints (black on white).
+6. Open **Cheat sheets**, press **Print**: only the sheet prints (black on white).
 7. Open **Quiz**, start a 10-question round, answer with keys 1 to 4.
 
 ---
@@ -4444,7 +4467,7 @@ The requester asked to stop adding features and asked how to open the page. Answ
 | Buttons do nothing for a second or two | The animation is running (`body.busy` blocks clicks until it finishes) | Wait for the chip to land. To speed up testing use the reduced-motion emulation (section 10). |
 | Colours look wrong or flat | Browser too old for `color-mix()` | Update the browser. |
 | Dark/light choice not remembered | `localStorage` blocked on `file://` in your browser | Harmless: the page falls back to dark each load. Serve the folder over `http://localhost` or GitHub Pages if you want persistence. |
-| Cheat sheet prints the whole page or a blank page | You printed with Ctrl+P without opening the sheet, or print backgrounds are disabled | Click **Cheat sheet**, then **Print**. In the print dialog enable "Background graphics" if you want the coloured boxes. |
+| Cheat sheet prints the whole page or a blank page | You printed with Ctrl+P without opening the sheet, or print backgrounds are disabled | Click **Cheat sheets**, then **Print**. In the print dialog enable "Background graphics" if you want the coloured boxes. |
 | Scenario seems stuck | You did something unexpected | The coach adapts to the current state; read Step 1. To start over press **Reset sandbox** (restarts the current scenario) or pick another scenario. |
 | Quiz keys 1 to 4 do nothing | Focus is outside the overlay or the results screen is showing | Click inside the quiz, or answer with the mouse. |
 | Opening `index.html` launches a text editor | Windows file association | Right-click, **Open with**, choose your browser, or paste the file path into the browser's address bar as `file:///C:/Repos/git-how/index.html`. |
@@ -4608,3 +4631,317 @@ Browser-side commands (the autoplay, fuzz, special-path and data checks) are in 
 | Scenario | In this app: a prepared situation with a goal checklist. |
 | Coach | In this app: the logic that explains the situation and judges your choices. |
 | Event | In this app: a named thing that happened (for example `commit`), used to tick checklist items. |
+
+---
+
+## Appendix D: Changes after the first publish
+
+After the project was first pushed to GitHub (to the repository `git-how` in the author's personal organisation), three additions were made. Section 8 already contains the updated `index.html`, `style.css` and `js/cheatsheet.js`. This appendix covers the rest.
+
+### D.1 What changed
+
+| Change | Files | Why |
+|--------|-------|-----|
+| A second tab, **Which GitHub account am I using?**, inside the cheat sheet overlay | `index.html`, `js/cheatsheet.js`, `style.css` | The author kept getting confused about which GitHub login was used for pushing and for Copilot chat, so a one-page reference was added to the page itself. The top-bar button was renamed **Cheat sheets**. |
+| The cheat sheet image and its source | `assets/github-account-cheatsheet.png`, `assets/github-account-cheatsheet.html` | The tab shows the PNG. The HTML is the editable source. |
+| A project README | `README.md` | The GitHub repository page had no description. |
+
+### D.2 Why the repo copy of the cheat sheet uses placeholders
+
+The author's own version listed real account names and an email address. Because the repository is **public**, the copy in the repo uses placeholders (`YOUR-PERSONAL-USERNAME`, `YOUR-COPILOT-ACCOUNT`, `YOUR-WORK-ACCOUNT`, `you@example.com`). The personal version was kept in a separate folder outside the repository, so `git add .` cannot publish it by accident. After generating the sanitised file, a search confirmed that none of the personal names remained.
+
+### D.3 How the new tab works
+
+* `index.html`: the cheat sheet overlay now has a tab bar (`role="tablist"`) with two buttons (`#tab-commands`, `#tab-account`) and two panels (`#cheat-page` with the generated command list, `#acct-page` with an `<img>` of the PNG and a link to open it full size). The image has a descriptive `alt` text.
+* `js/cheatsheet.js`: clicking a tab sets `aria-selected` on the tabs and toggles the `hidden` attribute on the panels.
+* `style.css`: styles for the tab bar and image. In print mode the intro line is hidden so only the image prints.
+
+### D.4 Recreate the image
+
+1. Create the folder `assets` and save the HTML below as `assets/github-account-cheatsheet.html`.
+2. Render it to a PNG with Microsoft Edge in headless mode. In PowerShell, pass the window size as its own variable, because building it inside the command line produced a cropped image:
+
+```powershell
+$edge = 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'
+$size = '--window-size=1400,1575'
+$shot = '--screenshot=C:\Repos\git-how\assets\github-account-cheatsheet.png'
+& $edge --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=2 $size $shot 'file:///C:/Repos/git-how/assets/github-account-cheatsheet.html'
+```
+
+`1575` is the page height plus a few pixels, found by loading the page once and reading `document.querySelector('.sheet').offsetHeight`. If you edit the text, re-measure. `--force-device-scale-factor=2` makes the image sharp.
+
+Any browser works for a screenshot too: open the HTML, then use the developer tools "capture full size screenshot" command.
+
+**File: `assets/github-account-cheatsheet.html`**
+
+````html
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>Which GitHub account am I using? Cheat sheet</title>
+<style>
+  :root {
+    color-scheme: light;
+    --cp-bg: #f7f4ef; --cp-bg-elevated: #fcfbf8; --cp-surface: #ffffff; --cp-surface-soft: #f5f5f5;
+    --cp-border: #dedede; --cp-border-strong: #919191; --cp-text: #242424; --cp-text-muted: #5c5c5c; --cp-text-soft: #3f3f3f;
+    --cp-accent: #b11f4b; --cp-accent-soft: rgba(177, 31, 75, 0.08); --cp-accent-fg: #ffffff;
+    --cp-success: #16a34a; --cp-danger: #dc2626; --cp-warning: #b45309;
+    --c-author: #2563eb; --c-push: #16a34a; --c-copilot: #9333ea; --c-warn: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--cp-bg); color: var(--cp-text); font-family: "Segoe UI", Aptos, Calibri, sans-serif; font-size: 15px; line-height: 1.4; }
+  code, .cmd { font-family: Consolas, "Courier New", monospace; }
+  .sheet { width: 1400px; padding: 28px 32px 24px; }
+  h1 { margin: 0; font-size: 32px; line-height: 1.15; }
+  .sub { color: var(--cp-text-muted); font-size: 16px; margin: 4px 0 16px; }
+  .rule { display: flex; gap: 10px; margin-bottom: 16px; }
+  .rule div { flex: 1; background: var(--cp-accent-soft); border: 1px solid var(--cp-accent); border-radius: 10px; padding: 8px 12px; font-size: 14px; }
+  .rule b { color: var(--cp-accent); }
+
+  .cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px; }
+  .cols2 { display: grid; grid-template-columns: 1.1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .card { background: var(--cp-surface); border: 1px solid var(--cp-border); border-top: 6px solid var(--k); border-radius: 12px; padding: 12px 14px 12px; }
+  .card h2 { margin: 0 0 2px; font-size: 18px; color: var(--k); line-height: 1.2; }
+  .card .what { margin: 0 0 8px; color: var(--cp-text-muted); font-size: 13.5px; }
+  .a { --k: var(--c-author); } .p { --k: var(--c-push); } .c { --k: var(--c-copilot); } .w { --k: var(--c-warn); } .m { --k: var(--cp-accent); }
+  .row { margin: 0 0 7px; }
+  .cmd { display: block; background: var(--cp-surface-soft); border: 1px solid var(--cp-border); border-radius: 6px; padding: 3px 8px; font-size: 13.5px; font-weight: 600; margin-bottom: 2px; overflow-wrap: anywhere; }
+  .exp { font-size: 13px; color: var(--cp-text-soft); }
+  .exp b { color: var(--cp-text); }
+  .note { margin-top: 6px; padding: 5px 9px; border-left: 4px solid var(--k); background: var(--cp-surface-soft); border-radius: 0 6px 6px 0; font-size: 13px; }
+  ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  ol.steps li { counter-increment: s; position: relative; padding-left: 32px; margin-bottom: 7px; }
+  ol.steps li::before { content: counter(s); position: absolute; left: 0; top: 1px; width: 22px; height: 22px; border-radius: 50%; background: var(--cp-accent); color: var(--cp-accent-fg); font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cp-text-muted); padding: 3px 6px; border-bottom: 2px solid var(--cp-border-strong); }
+  td { padding: 5px 6px; border-bottom: 1px solid var(--cp-border); vertical-align: top; }
+  td code { font-weight: 600; font-size: 13px; }
+  .tag { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 1px 8px; border-radius: 999px; color: #fff; }
+  .t-push { background: var(--c-push); } .t-chat { background: var(--c-copilot); } .t-work { background: var(--cp-warning); }
+  .foot { margin-top: 10px; color: var(--cp-text-muted); font-size: 12.5px; display: flex; justify-content: space-between; gap: 20px; }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <h1>Which GitHub account am I using?</h1>
+  <p class="sub">One-page check before you push, and for Copilot chat. Three <b>separate</b> things are all called "my account". Check each one on its own.</p>
+
+  <div class="rule">
+    <div><b>Rule 1.</b> The <b>active login</b> decides who pushes. The email in <code>git config</code> does not.</div>
+    <div><b>Rule 2.</b> Pushing and Copilot chat are <b>independent</b>. Changing one never changes the other.</div>
+    <div><b>Rule 3.</b> Open a new terminal? Check again. A background variable may switch you back.</div>
+  </div>
+
+  <div class="cols3">
+    <section class="card a">
+      <h2>1. Commit author</h2>
+      <p class="what">Who each commit is <b>labelled</b> as. A label only. It grants no access.</p>
+      <div class="row"><span class="cmd">git config user.name</span><span class="cmd">git config user.email</span><span class="exp">Shows the name and email Git will stamp on your next commit. Run it <b>inside the repo folder</b>.</span></div>
+      <div class="row"><span class="cmd">git log -1 --format="%an &lt;%ae&gt;"</span><span class="exp">Who the <b>latest commit</b> says it is from.</span></div>
+      <div class="row"><span class="cmd">git config --global --list</span><span class="exp">Everything set for your whole Windows user.</span></div>
+      <div class="note"><b>Change for this repo only:</b> run <code>git config user.email "you@x.com"</code> inside the repo (leave out <code>--global</code>).</div>
+    </section>
+
+    <section class="card p">
+      <h2>2. Push login (terminal)</h2>
+      <p class="what">Who <b>actually uploads</b> when you run <code>git push</code>. This is the one that matters.</p>
+      <div class="row"><span class="cmd">gh auth status</span><span class="exp">Lists every login. The one marked <b>Active account: true</b> is used. Plain <code>gh</code> only shows help.</span></div>
+      <div class="row"><span class="cmd">gh api user --jq .login</span><span class="exp">Prints just the <b>active account name</b>. The quickest check.</span></div>
+      <div class="row"><span class="cmd">git remote -v</span><span class="exp">Shows <b>where</b> it will push. The URL is <code>github.com/OWNER/REPO</code>.</span></div>
+      <div class="row"><span class="cmd">gh api repos/OWNER/REPO --jq .permissions</span><span class="exp"><b>"push": true</b> means this account may upload there.</span></div>
+      <div class="note"><b>Switch active login:</b> <code>gh auth switch --user YOUR-PERSONAL-USERNAME</code></div>
+    </section>
+
+    <section class="card c">
+      <h2>3. Copilot chat (VS Code)</h2>
+      <p class="what">Which account powers the <b>chat panel</b>. Has nothing to do with pushing.</p>
+      <div class="row"><span class="cmd">Accounts icon (person), bottom-left</span><span class="exp">Lists every account VS Code is signed in to.</span></div>
+      <div class="row"><span class="cmd">Click an account &gt; Manage Trusted Extensions</span><span class="exp">If <b>GitHub Copilot Chat</b> is ticked for that account, chat uses it.</span></div>
+      <div class="row"><span class="cmd">Copilot icon, bottom-right status bar</span><span class="exp">Shows Copilot status and usage for the signed-in account.</span></div>
+      <div class="note"><b>Change it:</b> Accounts icon &gt; the account &gt; <b>Sign Out</b>, then sign in to the one you want when Copilot asks. Menu wording can vary a little by VS Code version.</div>
+    </section>
+  </div>
+
+  <div class="cols2">
+    <section class="card m">
+      <h2>Before every push: 5-step check</h2>
+      <p class="what">Takes 20 seconds. Run in the VS Code terminal, inside the project folder.</p>
+      <ol class="steps">
+        <li><span class="cmd">git status</span><span class="exp">Right folder and branch? Anything unexpected staged?</span></li>
+        <li><span class="cmd">git remote -v</span><span class="exp">Is the URL the <b>right org and repo</b>?</span></li>
+        <li><span class="cmd">gh api user --jq .login</span><span class="exp">Does it print <b>your personal username</b>?</span></li>
+        <li><span class="cmd">gh api repos/OWNER/REPO --jq .permissions</span><span class="exp">Is <b>"push": true</b>?</span></li>
+        <li><span class="cmd">git push -u origin main</span><span class="exp">Only now. <code>-u</code> is needed just the first time for a branch.</span></li>
+      </ol>
+    </section>
+
+    <section class="card m">
+      <h2>Write down your own accounts</h2>
+      <p class="what">Fill these in for yourself. The accounts can all be different people or roles.</p>
+      <table>
+        <thead><tr><th>Account</th><th>Use it for</th></tr></thead>
+        <tbody>
+          <tr><td><code>YOUR-PERSONAL-USERNAME</code> <span class="tag t-push">PUSH</span></td><td>Personal. Use for pushes to your own repos or org. Commits use your name and the email on this account.</td></tr>
+          <tr><td><code>YOUR-COPILOT-ACCOUNT</code> <span class="tag t-chat">CHAT</span></td><td>The account you sign in with for <b>Copilot chat</b> in VS Code. It does not have to be the one you push with.</td></tr>
+          <tr><td><code>YOUR-WORK-ACCOUNT</code> <span class="tag t-work">WORK</span></td><td>Work account. Keep it away from personal projects. Watch for a <code>GH_TOKEN</code> that points at it.</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><b>Add / remove a login:</b> <code>gh auth login</code> &nbsp;|&nbsp; <code>gh auth logout --user NAME</code>. When logging in, check the browser avatar says the account you want <b>before</b> you click Authorize.</div>
+    </section>
+</div>
+
+  <section class="card w" style="margin-bottom:14px">
+    <h2>The GH_TOKEN trap (this caught us once)</h2>
+    <p class="what">A Windows variable called <code>GH_TOKEN</code> overrides every stored login. If it is set, you push as <b>whoever owns that token</b>, whatever else you switch.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+      <div class="row"><b>How to spot it</b><span class="exp" style="display:block">In <code>gh auth status</code>, the active account says <b>(GH_TOKEN)</b> instead of <b>(keyring)</b>.</span></div>
+      <div class="row"><b>Where is it set? (prints True/False only)</b><span class="cmd" style="font-size:12px">foreach ($s in 'Process','User','Machine') { "{0}: {1}" -f $s, ($null -ne [Environment]::GetEnvironmentVariable('GH_TOKEN',$s)) }</span></div>
+      <div class="row"><b>Fix for this terminal only</b><span class="cmd">Remove-Item Env:GH_TOKEN</span><span class="exp">Comes back in every <b>new</b> terminal. Removing it for good (Windows "Environment Variables") may break other tools, so only do it if you know nothing needs it.</span></div>
+    </div>
+  </section>
+
+  <section class="card w">
+    <h2>Something went wrong? Symptom, cause, fix</h2>
+    <table>
+      <thead><tr><th style="width:28%">What you see</th><th style="width:30%">Likely cause</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td><code>Permission denied to ACCOUNT</code> or <code>403</code></td><td>The active login is the wrong account, or has no access</td><td><code>gh auth switch --user YOUR-PERSONAL-USERNAME</code>, or clear <code>GH_TOKEN</code>, then check step 3 and 4 above</td></tr>
+        <tr><td><code>Repository not found</code></td><td>Wrong URL in <code>origin</code>, or this account cannot see the repo</td><td><code>git remote -v</code> and check the spelling. Change it with <code>git remote set-url origin URL</code></td></tr>
+        <tr><td>A login pop-up asks for username or password</td><td>Git is not using the <code>gh</code> login</td><td><code>gh auth setup-git</code>, then try again. Never type a token into a random prompt</td></tr>
+        <tr><td>Commit shows the wrong name or email on GitHub</td><td>Commit identity is wrong (section 1)</td><td>Fix <code>user.email</code>. For the <b>last unpushed</b> commit only: <code>git commit --amend --reset-author --no-edit</code></td></tr>
+        <tr><td><code>GH007 ... would publish a private email</code></td><td>GitHub is hiding your email</td><td>Use the <b>noreply</b> email from GitHub Settings &gt; Emails in <code>git config user.email</code>, and amend the commit as above</td></tr>
+        <tr><td><code>rejected ... fetch first</code></td><td>GitHub has commits you do not</td><td><code>git pull</code>, then <code>git push</code>. Do not force-push</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="foot">
+    <span>Never paste a token (it looks like <code>gho_...</code> or <code>ghp_...</code>) into chat, files or commits. <code>gh auth status</code> hides it for you.</span>
+    <span>Git, Visualized project notes</span>
+  </div>
+</div>
+</body>
+</html>
+````
+
+### D.5 `README.md`
+
+**File: `README.md`**
+
+````markdown
+# Git, Visualized
+
+An interactive web page for learning **Git and GitHub** by doing. Pick a real-world situation, click commands, and watch files and commits move between the four places your work lives, while a plain-English coach tells you what is happening and whether your choice was right.
+
+It runs entirely in your browser. There is nothing to install, nothing is sent anywhere, and nothing real is touched: it is a simulation.
+
+## What you can do
+
+- **Watch Git work.** Four animated boxes show the **working folder**, **staging area**, **local repository** and **GitHub**. A live chart draws every commit, branch, merge and tag.
+- **Try 17 guided scenarios.** Each one sets up a situation and gives you a checklist. For each step you read where you are, pick a command, and get told if it was right or wrong and why.
+- **Make mistakes safely.** Commands that would fail show the real error message and explain it.
+- **Use 58 commands** across setup, daily work, syncing, branches, merging, pull requests, undoing mistakes, Issues, GitHub Actions and extras.
+- **Test yourself** with a 54-question quiz.
+- **Keep two cheat sheets.** One lists every command (printable). One explains how to check **which GitHub account** you are using for pushing and for Copilot chat.
+- **Switch between dark and light themes.**
+
+## Run it
+
+1. Download or clone this repository.
+2. Open `index.html` in a current browser (Chrome, Edge, Firefox or Safari). Double-clicking the file is enough.
+
+Keep `index.html`, `style.css`, `assets/` and `js/` together in the same folder.
+
+## How to use it
+
+1. Scroll to **Try it yourself** and choose a **scenario**.
+2. Read **Step 1: Where you are right now**.
+3. In **Step 2**, choose a command. Not sure? Press **Show me a hint**.
+4. Read **Step 3** to see whether it was the right choice, why, and what the command does.
+5. Watch the boxes and the commit history react. Tick off the checklist to finish the scenario.
+
+## The 17 scenarios
+
+| # | Scenario |
+|---|----------|
+| 1 | Start a project |
+| 2 | Save and share your work |
+| 3 | Start from an existing folder |
+| 4 | Get your teammates' changes |
+| 5 | When histories diverge |
+| 6 | Work on a branch |
+| 7 | Merge: fast-forward |
+| 8 | Merge: merge commit |
+| 9 | Fix a merge conflict |
+| 10 | Rebase for a straight history |
+| 11 | Pull request workflow |
+| 12 | Undo changes before committing |
+| 13 | Fix the last commit |
+| 14 | Undo a pushed commit |
+| 15 | Ignore files and tag a release |
+| 16 | Track work with Issues |
+| 17 | Automatic checks with GitHub Actions |
+
+There is also **Free play**, which starts from an empty sandbox with no checklist.
+
+## Cheat sheets
+
+Open **Cheat sheets** in the top bar.
+
+- **Commands:** every command from the sandbox with what it does and when to use it, plus golden rules and common errors. Use **Print** for a clean black-and-white copy.
+- **Which GitHub account am I using?** A one-page guide to checking the account used for commits, for pushing, and for Copilot chat in VS Code. The image is also at [`assets/github-account-cheatsheet.png`](assets/github-account-cheatsheet.png).
+
+## Project structure
+
+```
+index.html            Page structure and overlays
+style.css             Styling, themes, animations and print styles
+assets/               Account-check cheat sheet (PNG and its HTML source)
+js/
+  core.js             The simulated Git engine and shared state
+  actions-*.js        The commands (basic, branch, undo, ci)
+  coach.js            Plain-English guidance and the 17 scenarios
+  ui.js               Rendering: boxes, commit chart, terminal, animation
+  cheatsheet.js       Cheat sheet overlay
+  quiz-data.js        Quiz questions
+  quiz.js             Quiz logic
+  main.js             Wiring and start-up
+```
+
+The scripts are plain files that share one global object, so the page works straight from disk with no build step.
+
+## Full design and build guide
+
+[`GIT-VISUALIZER-DESIGN-PLANNING-AND-BUILD-GUIDE.md`](GIT-VISUALIZER-DESIGN-PLANNING-AND-BUILD-GUIDE.md) records the planning, design decisions, complete source, tests and troubleshooting. It is detailed enough to rebuild the project from scratch.
+
+## Publish it with GitHub Pages (optional)
+
+1. On GitHub open the repository, then **Settings > Pages**.
+2. Under **Build and deployment**, set **Source** to *Deploy from a branch*.
+3. Choose branch `main` and folder `/ (root)`, then **Save**.
+4. After a short wait GitHub shows the public address of the page.
+
+## Limitations
+
+- It simulates Git. The output imitates real Git but is not produced by Git.
+- Not covered: forks with an `upstream` remote, `cherry-pick`, interactive rebase, and file deletions with `git rm`.
+
+## License
+
+No license has been specified for this project.
+````
+
+### D.6 Publishing these changes (the Git steps)
+
+These are ordinary Git steps, practised on the real repository:
+
+```powershell
+git status                     # shows modified and new (untracked) files
+git add .                      # stage everything
+git commit -m "Add account cheat sheet tab, assets and README"
+git push                        # upload (origin/main is already set up)
+```
+
+Before pushing, run the five-step check from the account cheat sheet: `git remote -v`, `gh api user --jq .login`, and `gh api repos/OWNER/REPO --jq .permissions`.

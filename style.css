@@ -444,6 +444,12 @@ body.busy .act, body.busy .suggest .chip { pointer-events: none; opacity: 0.6; }
   background: var(--cp-bg-elevated); border-bottom: 1px solid var(--cp-border); padding: 10px 20px; font-weight: 600;
 }
 .cheat-page { max-width: 1100px; margin: 16px auto 40px; padding: 24px 28px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 16px; }
+.cheat-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.cheat-page[hidden] { display: none; }
+.acct-page { max-width: 1100px; }
+.acct-page img { display: block; width: 100%; height: auto; border: 1px solid var(--cp-border); border-radius: 8px; }
+.acct-intro { margin: 0 0 12px; color: var(--cp-text-soft); }
+.acct-intro a { color: var(--cp-link); }
 .cs-head h1 { font-size: 1.6rem; margin: 0; }
 .cs-head p { color: var(--cp-text-muted); margin-bottom: 14px; }
 .cs-flow { display: flex; align-items: stretch; gap: 6px; margin-bottom: 8px; }
@@ -476,6 +482,7 @@ body.busy .act, body.busy .suggest .chip { pointer-events: none; opacity: 0.6; }
   body.cheat-open > *:not(#cheatsheet) { display: none !important; }
   body.cheat-open .cheat-overlay { position: static; overflow: visible; background: none; }
   body.cheat-open .cheat-bar { display: none; }
+  body.cheat-open .acct-intro { display: none; }
   body.cheat-open .cheat-page { max-width: none; margin: 0; padding: 0; border: none; }
   .cs-sec td { padding: 2px 4px 2px 0; }
 }

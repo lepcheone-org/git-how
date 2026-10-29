@@ -32,7 +32,7 @@
     </div>
     <div class="topbar-actions">
       <button id="btn-quiz" class="btn" type="button">Quiz</button>
-      <button id="btn-cheat" class="btn" type="button">Cheat sheet</button>
+      <button id="btn-cheat" class="btn" type="button">Cheat sheets</button>
       <button id="btn-reset" class="btn" type="button">Reset sandbox</button>
       <label class="switch" title="Switch between dark and light theme">
         <input type="checkbox" id="theme-toggle" role="switch" aria-label="Use light theme">
@@ -210,12 +210,19 @@
 
   <footer class="foot">Everything here is a simulation. Nothing touches your real files or your real GitHub account.</footer>
 
-  <div id="cheatsheet" class="cheat-overlay" role="dialog" aria-modal="true" aria-labelledby="cheat-title" hidden>
+  <div id="cheatsheet" class="cheat-overlay" role="dialog" aria-modal="true" aria-label="Cheat sheets" hidden>
     <div class="cheat-bar">
-      <span>Cheat sheet: print it or keep it open while you practise</span>
+      <div class="cheat-tabs" role="tablist" aria-label="Cheat sheets">
+        <button type="button" class="tab" role="tab" id="tab-commands" aria-selected="true" aria-controls="cheat-page">Commands</button>
+        <button type="button" class="tab" role="tab" id="tab-account" aria-selected="false" aria-controls="acct-page">Which GitHub account am I using?</button>
+      </div>
       <div><button id="cheat-print" class="btn primary" type="button">Print</button> <button id="cheat-close" class="btn" type="button">Close</button></div>
     </div>
-    <article class="cheat-page" id="cheat-page"></article>
+    <article class="cheat-page" id="cheat-page" role="tabpanel" aria-labelledby="tab-commands"></article>
+    <article class="cheat-page acct-page" id="acct-page" role="tabpanel" aria-labelledby="tab-account" hidden>
+      <p class="acct-intro">Confused about which GitHub account you are signed in to, for pushing or for Copilot chat? Use this page. <a href="assets/github-account-cheatsheet.png" target="_blank" rel="noopener">Open the image full size</a>.</p>
+      <img src="assets/github-account-cheatsheet.png" alt="One-page cheat sheet: how to check which GitHub account is used for commits (git config), for pushing (gh auth status, gh api user, git remote -v), and for Copilot chat in VS Code (Accounts menu). Includes a 5-step check before every push, the GH_TOKEN problem, and a troubleshooting table.">
+    </article>
   </div>
 
   <div id="quiz" class="cheat-overlay" role="dialog" aria-modal="true" aria-labelledby="quiz-title" hidden>
