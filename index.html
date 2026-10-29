@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Git, Visualized</title>
+  <script>
+    // Runs first so the page never flashes the wrong theme. Saved choice > ?scoutTheme= > dark.
+    (() => {
+      let saved = null;
+      try { saved = localStorage.getItem("gitviz-theme"); } catch (e) {}
+      const param = new URLSearchParams(window.location.search).get("scoutTheme");
+      document.documentElement.setAttribute("data-theme", saved || param || "dark");
+    })();
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 48 32" aria-hidden="true">
+        <path class="l1" d="M6 16 H24 M24 16 Q30 16 32 8 H42 M24 16 Q30 16 32 24 H42"/>
+        <circle class="n1" cx="6" cy="16" r="4"/>
+        <circle class="n1" cx="24" cy="16" r="4"/>
+        <circle class="n2" cx="42" cy="8" r="4"/>
+        <circle class="n3" cx="42" cy="24" r="4"/>
+      </svg>
+      <div>
+        <h1>Git, visualized</h1>
+        <p>Click a command and watch what happens, from an empty repo to a merged change.</p>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button id="btn-quiz" class="btn" type="button">Quiz</button>
+      <button id="btn-cheat" class="btn" type="button">Cheat sheet</button>
+      <button id="btn-reset" class="btn" type="button">Reset sandbox</button>
+      <label class="switch" title="Switch between dark and light theme">
+        <input type="checkbox" id="theme-toggle" role="switch" aria-label="Use light theme">
+        <span class="track"><span class="thumb"></span></span>
+        <span class="switch-label" id="theme-label">Dark</span>
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <section class="howto" aria-label="How to use this page">
+      <h2>New to Git? Start here</h2>
+      <p class="howto-lead">Git keeps a history of your project so you can save versions of your work, undo mistakes, and work with other people. GitHub is a website that stores a shared copy online. This page is a safe practice area: nothing you click here changes any real file.</p>
+      <ol class="howto-steps">
+        <li><span class="num">1</span><div><b>Watch</b><br>The boxes and the history chart on this page are a live picture of a project. They change as you work.</div></li>
+        <li><span class="num">2</span><div><b>Try</b><br>Use the <b>Try it yourself</b> sandbox to pick Git commands. Wrong choices are fine. That is how you learn.</div></li>
+        <li><span class="num">3</span><div><b>Learn</b><br>After every click you are told if it was the right move, why, and what to do next.</div></li>
+      </ol>
+      <div class="howto-actions">
+        <a class="btn primary" href="#sandbox">Jump to the sandbox</a>
+        <details class="glossary">
+          <summary>Key words you will see</summary>
+          <dl>
+            <dt>Repository (repo)</dt><dd>A project folder that Git is tracking, plus its full history.</dd>
+            <dt>Commit</dt><dd>A saved snapshot of your project at one moment, with a short message. Like a save point in a game.</dd>
+            <dt>Working directory</dt><dd>The normal folder on your computer where you edit files.</dd>
+            <dt>Staging area</dt><dd>A waiting room where you choose which changes go into the next commit.</dd>
+            <dt>Local / remote</dt><dd>Local is your computer. Remote is a copy somewhere else, usually GitHub.</dd>
+            <dt>origin</dt><dd>The default nickname for the remote (GitHub) address.</dd>
+            <dt>Branch (main)</dt><dd>A line of commits. <code>main</code> is the default, main line of your project.</dd>
+            <dt>Merge / rebase</dt><dd>Two ways to bring one branch's work into another. Merge joins the lines. Rebase replays commits to keep a straight line.</dd>
+            <dt>Conflict</dt><dd>Two branches changed the same lines. Git pauses and asks you to choose.</dd>
+            <dt>Pull request (PR)</dt><dd>A GitHub proposal to merge a branch, where teammates review it first.</dd>
+            <dt>Stash</dt><dd>A shelf for unfinished changes you are not ready to commit.</dd>
+            <dt>Tag</dt><dd>A permanent label on one commit, usually a release like v1.0.</dd>
+            <dt>HEAD</dt><dd>A marker meaning "you are here": the commit you are currently on.</dd>
+            <dt>Clone / push / pull</dt><dd>Clone: download a repo. Push: upload your commits. Pull: download others' commits and combine them with yours.</dd>
+          </dl>
+        </details>
+      </div>
+    </section>
+
+    <details class="card vs" open>
+      <summary><h2>Git vs GitHub: what is the difference?</h2></summary>
+      <div class="vs-grid">
+        <div class="vs-col vs-git">
+          <span class="tag watch">The tool</span>
+          <h3>Git</h3>
+          <p>A program installed on <b>your computer</b>. It records the history of your files: what changed, who changed it, and when. It works fully offline and is free.</p>
+          <p class="vs-ana"><b>Think of it as:</b> a file system with built-in version history for a whole folder.</p>
+          <p class="vs-ex">Commands: <code>commit</code> <code>branch</code> <code>merge</code> <code>log</code> <code>status</code></p>
+        </div>
+        <div class="vs-link" aria-hidden="true"><span><code>clone</code><code>push</code><code>pull</code><code>fetch</code></span><small>connect them</small></div>
+        <div class="vs-col vs-gh">
+          <span class="tag try">The website</span>
+          <h3>GitHub</h3>
+          <p>An <b>online service</b> that stores Git repositories so people can share and collaborate. It adds reviews, issue tracking and automation. You need an account and internet.</p>
+          <p class="vs-ana"><b>Think of it as:</b> the shared file server with a web portal, permissions and a ticket system on top. GitLab and Bitbucket do the same job.</p>
+          <p class="vs-ex">Features: <code>pull requests</code> <code>issues</code> <code>Actions</code> <code>forks</code></p>
+        </div>
+      </div>
+      <table class="vs-table">
+        <thead><tr><th>What you want</th><th>Git (your computer)</th><th>GitHub (website)</th></tr></thead>
+        <tbody>
+          <tr><td>Record history of changes (commits)</td><td>Yes</td><td>Shows it in the browser</td></tr>
+          <tr><td>Work without internet</td><td>Yes</td><td>No</td></tr>
+          <tr><td>Branches and merging</td><td>Yes</td><td>Shows branches, offers merge buttons</td></tr>
+          <tr><td>Pull requests and code review</td><td>No</td><td>Yes</td></tr>
+          <tr><td>Issues (bugs, tasks)</td><td>No</td><td>Yes</td></tr>
+          <tr><td>Automatic tests (Actions)</td><td>No</td><td>Yes</td></tr>
+          <tr><td>Control who is allowed to push to a project</td><td>No</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+    </details>
+
+    <section class="card" aria-label="Where your work lives">
+      <div class="card-head">
+        <h2><span class="tag watch">Watch</span>Where your work lives</h2>
+        <p>A live picture, not clickable. Use the sandbox below to make things happen here. Work moves from left to right.</p>
+      </div>
+      <div class="flow" id="flow">
+        <div class="zone" id="z-wd" style="--zc: var(--z-wd)">
+          <div class="zone-head">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            <div><h3>Working Directory</h3><p>The files you edit on your computer</p></div>
+          </div>
+          <ul class="zone-body" id="wd-body"></ul>
+        </div>
+
+        <div class="link" id="l-wd-stage"><span class="lbl">git add</span><span class="line"></span></div>
+
+        <div class="zone" id="z-stage" style="--zc: var(--z-stage)">
+          <div class="zone-head">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>
+            <div><h3>Staging Area</h3><p>Changes picked for the next commit</p></div>
+          </div>
+          <ul class="zone-body" id="stage-body"></ul>
+        </div>
+
+        <div class="link" id="l-stage-local"><span class="lbl">git commit</span><span class="line"></span></div>
+
+        <div class="zone" id="z-local" style="--zc: var(--z-local)">
+          <div class="zone-head">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>
+            <div><h3>Local Repository</h3><p>Your commit history (the hidden .git folder)</p></div>
+          </div>
+          <ul class="zone-body" id="local-body"></ul>
+        </div>
+
+        <div class="linkpair">
+          <div class="link" id="l-push"><span class="lbl">git push</span><span class="line"></span></div>
+          <div class="link left" id="l-fetch"><span class="lbl">fetch / pull</span><span class="line"></span></div>
+        </div>
+
+        <div class="zone" id="z-remote" style="--zc: var(--z-remote)">
+          <div class="zone-head">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a4 4 0 0 1-.5-7.97A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 9z"/></svg>
+            <div><h3>GitHub (remote)</h3><p>The shared copy, called "origin"</p></div>
+          </div>
+          <ul class="zone-body" id="remote-body"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="sandbox" class="card sandbox" aria-label="Try it yourself: interactive sandbox">
+      <div class="sb-banner">
+        <h2><span class="tag try">Try it yourself</span>Interactive sandbox</h2>
+        <p>This is the part you click. Pick a scenario, read where you are, choose a command, then read what happened. Watch the boxes above and the history below react.</p>
+      </div>
+      <div class="scn-bar">
+        <h3 class="scn-heading">Choose a scenario <span>Each one sets up a real situation and gives you a checklist</span></h3>
+        <div class="scenarios" id="scenarios" role="group" aria-label="Scenarios"></div>
+        <div class="mission" id="mission" aria-live="polite"></div>
+      </div>
+      <div class="sb-grid">
+        <div class="sb-col">
+          <div class="step-block">
+            <h3 class="step-head"><span class="num">1</span>Where you are right now</h3>
+            <div id="situation" class="situation" aria-live="polite"></div>
+          </div>
+          <div class="step-block">
+            <h3 class="step-head"><span class="num">2</span>What should you do next? Pick a command</h3>
+            <div class="hintrow" id="hint"></div>
+            <div class="tabs" id="tabs" role="tablist" aria-label="Command groups"></div>
+            <p class="tab-intro" id="tab-intro"></p>
+            <div class="actions" id="actions"></div>
+          </div>
+        </div>
+        <div class="sb-col sb-col-right">
+          <div class="step-block">
+            <h3 class="step-head"><span class="num">3</span>Was it right? What happened?</h3>
+            <div id="explain" aria-live="polite"></div>
+          </div>
+          <div class="step-block">
+            <h3 class="step-head term-head">Terminal <span>what a real computer would print</span></h3>
+            <div class="terminal" id="terminal" role="log"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" aria-label="Commit history">
+      <div class="card-head">
+        <h2><span class="tag watch">Watch</span>Commit history</h2>
+        <div class="legend">
+          <span><i class="dot full"></i>On your computer and GitHub</span>
+          <span><i class="dot local"></i>Only on your computer (not pushed)</span>
+          <span><i class="dot remote"></i>Only on GitHub (not fetched)</span>
+        </div>
+      </div>
+      <div class="graph-scroll" id="graph-scroll"><div class="graph" id="graph"></div></div>
+    </section>
+
+  </main>
+
+  <footer class="foot">Everything here is a simulation. Nothing touches your real files or your real GitHub account.</footer>
+
+  <div id="cheatsheet" class="cheat-overlay" role="dialog" aria-modal="true" aria-labelledby="cheat-title" hidden>
+    <div class="cheat-bar">
+      <span>Cheat sheet: print it or keep it open while you practise</span>
+      <div><button id="cheat-print" class="btn primary" type="button">Print</button> <button id="cheat-close" class="btn" type="button">Close</button></div>
+    </div>
+    <article class="cheat-page" id="cheat-page"></article>
+  </div>
+
+  <div id="quiz" class="cheat-overlay" role="dialog" aria-modal="true" aria-labelledby="quiz-title" hidden>
+    <div class="cheat-bar">
+      <span>Quiz: what would you use?</span>
+      <button id="quiz-close" class="btn" type="button">Close</button>
+    </div>
+    <article class="cheat-page quiz-page" id="quiz-page"></article>
+  </div>
+
+  <script src="js/core.js"></script>
+  <script src="js/actions-basic.js"></script>
+  <script src="js/actions-branch.js"></script>
+  <script src="js/actions-undo.js"></script>
+  <script src="js/actions-ci.js"></script>
+  <script src="js/coach.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/cheatsheet.js"></script>
+  <script src="js/quiz-data.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
