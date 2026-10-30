@@ -471,6 +471,14 @@ body.busy .act, body.busy .suggest .chip { pointer-events: none; opacity: 0.6; }
 .cs-sec ol, .cs-sec ul { margin: 0; padding-left: 18px; font-size: 0.84rem; }
 .cs-sec dl { margin: 0; font-size: 0.82rem; display: grid; grid-template-columns: max-content 1fr; gap: 3px 10px; }
 .cs-sec dt { font-weight: 700; } .cs-sec dd { margin: 0; color: var(--cp-text-soft); }
+.switch-page .cs-sec { font-size: 0.84rem; }
+.basics-page .cs-sec { font-size: 0.95rem; }
+.switch-page .cs-sec p, .basics-page .cs-sec p { margin: 6px 0; }
+.switch-page .cs-sec pre {
+  margin: 8px 0; padding: 8px 12px; white-space: pre-wrap; overflow-wrap: anywhere;
+  background: var(--cp-surface-soft); border: 1px solid var(--cp-border); border-radius: 0.625rem;
+}
+.switch-page .cs-sec td { overflow-wrap: anywhere; }
 
 @media print {
   :root, html[data-theme="dark"] {

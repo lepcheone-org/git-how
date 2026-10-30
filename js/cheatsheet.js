@@ -78,7 +78,7 @@
   }
   build();
   $("btn-cheat").addEventListener("click", open);
-  const tabs = { commands: [$("tab-commands"), $("cheat-page")], account: [$("tab-account"), $("acct-page")] };
+  const tabs = { commands: [$("tab-commands"), $("cheat-page")], account: [$("tab-account"), $("acct-page")], switching: [$("tab-switch"), $("switch-page")], basics: [$("tab-basics"), $("basics-page")] };
   Object.entries(tabs).forEach(([name, [tab]]) => tab.addEventListener("click", () => {
     Object.entries(tabs).forEach(([n, [t, panel]]) => { t.setAttribute("aria-selected", String(n === name)); panel.hidden = n !== name; });
   }));

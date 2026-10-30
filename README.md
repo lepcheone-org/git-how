@@ -11,7 +11,7 @@ It runs entirely in your browser. There is nothing to install, nothing is sent a
 - **Make mistakes safely.** Commands that would fail show the real error message and explain it.
 - **Use 58 commands** across setup, daily work, syncing, branches, merging, pull requests, undoing mistakes, Issues, GitHub Actions and extras.
 - **Test yourself** with a 54-question quiz.
-- **Keep two cheat sheets.** One lists every command (printable). One explains how to check **which GitHub account** you are using for pushing and for Copilot chat.
+- **Keep four cheat sheets.** Browse sandbox commands, account checks for pushing and Copilot chat, a quick PowerShell guide to switching GitHub accounts, and the difference between add, commit and push.
 - **Switch between dark and light themes.**
 
 ## Run it
@@ -59,6 +59,8 @@ Open **Cheat sheets** in the top bar.
 
 - **Commands:** every command from the sandbox with what it does and when to use it, plus golden rules and common errors. Use **Print** for a clean black-and-white copy.
 - **Which GitHub account am I using?** A one-page guide to checking the account used for commits, for pushing, and for Copilot chat in VS Code. The image is also at [`assets/github-account-cheatsheet.png`](assets/github-account-cheatsheet.png).
+- **Switch GitHub accounts:** a printable PowerShell quick reference for checking and switching logins, clearing token overrides, adding accounts, configuring HTTPS Git credentials, and troubleshooting repository access. Includes a pre-push checklist and the distinction between login, remote URL and commit author.
+- **Add, commit & push:** a beginner-friendly explanation of what each command does, when to use it, and the shopping-basket/photo analogy, followed by a three-step flow summary.
 
 ## Project structure
 

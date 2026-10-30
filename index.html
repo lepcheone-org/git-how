@@ -215,6 +215,8 @@
       <div class="cheat-tabs" role="tablist" aria-label="Cheat sheets">
         <button type="button" class="tab" role="tab" id="tab-commands" aria-selected="true" aria-controls="cheat-page">Commands</button>
         <button type="button" class="tab" role="tab" id="tab-account" aria-selected="false" aria-controls="acct-page">Which GitHub account am I using?</button>
+        <button type="button" class="tab" role="tab" id="tab-switch" aria-selected="false" aria-controls="switch-page">Switch GitHub accounts</button>
+        <button type="button" class="tab" role="tab" id="tab-basics" aria-selected="false" aria-controls="basics-page">Add, commit &amp; push</button>
       </div>
       <div><button id="cheat-print" class="btn primary" type="button">Print</button> <button id="cheat-close" class="btn" type="button">Close</button></div>
     </div>
@@ -222,6 +224,109 @@
     <article class="cheat-page acct-page" id="acct-page" role="tabpanel" aria-labelledby="tab-account" hidden>
       <p class="acct-intro">Confused about which GitHub account you are signed in to, for pushing or for Copilot chat? Use this page. <a href="assets/github-account-cheatsheet.png" target="_blank" rel="noopener">Open the image full size</a>.</p>
       <img src="assets/github-account-cheatsheet.png" alt="One-page cheat sheet: how to check which GitHub account is used for commits (git config), for pushing (gh auth status, gh api user, git remote -v), and for Copilot chat in VS Code (Accounts menu). Includes a 5-step check before every push, the GH_TOKEN problem, and a troubleshooting table.">
+    </article>
+    <article class="cheat-page switch-page" id="switch-page" role="tabpanel" aria-labelledby="tab-switch" hidden>
+      <header class="cs-head">
+        <h1>GitHub accounts: check &amp; switch</h1>
+        <p>Quick reference for PowerShell. Right account, right destination, then push.</p>
+      </header>
+      <div class="cs-cols">
+        <section class="cs-sec">
+          <h2>1. Check your active account</h2>
+          <table><tbody>
+            <tr><td><code>gh auth status</code></td><td>Lists saved accounts. Look for <b>Active account: true</b>.</td></tr>
+            <tr><td><code>gh api user --jq .login</code></td><td>Prints only the username GitHub CLI is currently using.</td></tr>
+            <tr><td><code>git remote -v</code></td><td>Shows where Git fetches and pushes, <b>not</b> which account authenticates.</td></tr>
+          </tbody></table>
+          <p>Several accounts can be saved; only one is active per GitHub host in GitHub CLI.</p>
+        </section>
+        <section class="cs-sec">
+          <h2>2. Switch to a saved account</h2>
+          <p>Personal account:</p>
+          <pre><code>gh auth switch --hostname github.com --user lepcheone</code></pre>
+          <p>Work account:</p>
+          <pre><code>gh auth switch --hostname github.com --user v-ashrestha_microsoft</code></pre>
+          <p>For another saved account, replace the username. Confirm the switch:</p>
+          <pre><code>gh api user --jq .login</code></pre>
+          <p>Switching accounts does <b>not</b> change your remote URL or commit author.</p>
+        </section>
+        <section class="cs-sec">
+          <h2>3. Token variable blocks switching</h2>
+          <p>If <code>gh</code> says an environment token is being used, clear both possible overrides in <b>this terminal only</b>:</p>
+          <pre><code>$env:GH_TOKEN = $null
+$env:GITHUB_TOKEN = $null</code></pre>
+          <p>Then repeat the switch command. Saved credentials are not deleted. If the override returns in a new terminal, update its persistent source.</p>
+        </section>
+        <section class="cs-sec">
+          <h2>4. Account is not saved yet</h2>
+          <pre><code>gh auth login --hostname github.com --git-protocol https --web</code></pre>
+          <p>Follow the browser prompts and sign into the intended account.</p>
+        </section>
+        <section class="cs-sec">
+          <h2>5. CLI is correct, but Git uses another login</h2>
+          <pre><code>gh auth setup-git --hostname github.com</code></pre>
+          <p>Makes HTTPS Git operations use GitHub CLI credentials. This changes GitHub credential configuration <b>across repositories</b>, not just this one. SSH remotes use SSH keys instead.</p>
+        </section>
+        <section class="cs-sec">
+          <h2>6. "Repository not found"</h2>
+          <pre><code>git remote -v
+gh api user --jq .login
+gh repo view OWNER/REPO
+gh api repos/OWNER/REPO --jq .permissions.push</code></pre>
+          <p>Replace <code>OWNER/REPO</code> with the destination, for example <code>lepcheone-org/git-how</code>. Check the URL, active username and repository access. The last command must return <code>true</code> for write access; branch rules may still restrict pushes.</p>
+        </section>
+        <section class="cs-sec">
+          <h2>7. Login, destination and author are different</h2>
+          <table><tbody>
+            <tr><td><b>GitHub login</b></td><td>Who authenticates. Check with <code>gh api user --jq .login</code>. Git can use separate credentials unless configured above.</td></tr>
+            <tr><td><b>Remote URL</b></td><td>Which repository receives your push. Check with <code>git remote -v</code>.</td></tr>
+            <tr><td><b>Commit author</b></td><td>Name and email recorded in new commits. Not your login:</td></tr>
+          </tbody></table>
+          <pre><code>git config user.name
+git config user.email</code></pre>
+          <p>Run inside the repository. Switching terminal accounts also does not switch your Copilot account in VS Code.</p>
+        </section>
+        <section class="cs-sec">
+          <h2>Quick routine before pushing</h2>
+          <pre><code>gh api user --jq .login
+git remote -v
+git status
+git push</code></pre>
+          <p>Confirm the account, destination and branch before the last command. For the first push of <code>main</code>, use <code>git push -u origin main</code>. Push uploads existing commits; stage and commit first only if you have changes to save.</p>
+        </section>
+      </div>
+    </article>
+    <article class="cheat-page basics-page" id="basics-page" role="tabpanel" aria-labelledby="tab-basics" hidden>
+      <header class="cs-head">
+        <h1>Git add, commit &amp; push</h1>
+        <p>Three steps: choose your changes, save a snapshot, then share it.</p>
+      </header>
+      <section class="cs-sec">
+        <h2>1. <code>git add</code></h2>
+        <p><b>What it does:</b> Copies your selected changes from the <b>Working folder</b> into the <b>Staging area</b>. Your working files stay where they are.</p>
+        <p><b>When to use it:</b> After you edit files and decide, "These are the changes I want to save next."</p>
+        <p><b>Think of it as:</b> Putting items into a shopping basket.</p>
+      </section>
+      <section class="cs-sec">
+        <h2>2. <code>git commit</code></h2>
+        <p><b>What it does:</b> Takes everything currently in the <b>Staging area</b> and saves a snapshot into your <b>Local repo</b> (your project's history on your computer).</p>
+        <p><b>When to use it:</b> When you are ready to record a checkpoint of your work, with a message describing what you did.</p>
+        <p><b>Think of it as:</b> Taking a photo of the items in your shopping basket and storing that photo.</p>
+      </section>
+      <section class="cs-sec">
+        <h2>3. <code>git push</code></h2>
+        <p><b>What it does:</b> Sends your local commits (the snapshots) up to <b>GitHub</b>, when that is your remote (the shared online copy).</p>
+        <p><b>When to use it:</b> When you want to back up your committed work online or share it with others.</p>
+        <p><b>Think of it as:</b> Uploading those photos to the cloud.</p>
+      </section>
+      <section class="cs-sec">
+        <h2>Quick summary of the flow</h2>
+        <ol>
+          <li>Edit files &rarr; <code>git add</code> (put in basket).</li>
+          <li><code>git commit</code> (take a photo / save snapshot).</li>
+          <li><code>git push</code> (upload the photos to GitHub).</li>
+        </ol>
+      </section>
     </article>
   </div>
 
