@@ -230,6 +230,19 @@
         <h1>GitHub accounts: check &amp; switch</h1>
         <p>Quick reference for PowerShell. Right account, right destination, then push.</p>
       </header>
+      <section class="cs-sec" aria-labelledby="account-flow-title">
+        <h2 id="account-flow-title">Quick sequence: use the right account</h2>
+        <p><b>Check &rarr; switch if needed &rarr; connect Git &rarr; verify &rarr; push</b></p>
+        <p>For HTTPS remotes on GitHub.com. Replace <code>USERNAME</code> with your login and <code>OWNER/REPO</code> with the destination shown by <code>git remote -v</code>.</p>
+        <ol>
+          <li><b>Check:</b> <code>gh api user --jq .login</code> shows the active CLI username. Use <code>gh auth status</code> to see saved accounts.</li>
+          <li><b>Switch if needed:</b> <code>gh auth switch --hostname github.com --user USERNAME</code>. If a token override blocks it or the account is not saved, use the fixes below.</li>
+          <li><b>Connect Git:</b> if not already configured, run <code>gh auth setup-git --hostname github.com</code> so HTTPS Git uses CLI credentials. This changes credential configuration across repositories; it is not needed for every push.</li>
+          <li><b>Verify:</b> repeat <code>gh api user --jq .login</code>, check <code>git remote -v</code>, then run <code>gh api repos/OWNER/REPO --jq .permissions.push</code>. Confirm the intended username, destination and <code>true</code> write permission.</li>
+          <li><b>Push:</b> run <code>git status</code> to check your branch and changes, then <code>git push</code> when ready. Stage and commit new changes first if needed. Branch rules may still restrict a push.</li>
+        </ol>
+        <p><b>Stop if a check fails:</b> fix the login, URL or permissions before pushing.</p>
+      </section>
       <div class="cs-cols">
         <section class="cs-sec">
           <h2>1. Check your active account</h2>
@@ -299,22 +312,28 @@ git push</code></pre>
     <article class="cheat-page basics-page" id="basics-page" role="tabpanel" aria-labelledby="tab-basics" hidden>
       <header class="cs-head">
         <h1>Git add, commit &amp; push</h1>
-        <p>Three steps: choose your changes, save a snapshot, then share it.</p>
+        <p><b>Check &rarr; stage &rarr; save &rarr; upload</b></p>
       </header>
       <section class="cs-sec">
-        <h2>1. <code>git add</code></h2>
+        <h2>1. <code>git status</code></h2>
+        <p><b>What it does:</b> Shows your current branch and which files are changed, staged or untracked. It does not change anything.</p>
+        <p><b>When to use it:</b> Before staging, committing or pushing, to check the state of your work.</p>
+        <p><b>Think of it as:</b> Checking your shopping list and what is already in your basket.</p>
+      </section>
+      <section class="cs-sec">
+        <h2>2. <code>git add</code></h2>
         <p><b>What it does:</b> Copies your selected changes from the <b>Working folder</b> into the <b>Staging area</b>. Your working files stay where they are.</p>
         <p><b>When to use it:</b> After you edit files and decide, "These are the changes I want to save next."</p>
         <p><b>Think of it as:</b> Putting items into a shopping basket.</p>
       </section>
       <section class="cs-sec">
-        <h2>2. <code>git commit</code></h2>
+        <h2>3. <code>git commit</code></h2>
         <p><b>What it does:</b> Takes everything currently in the <b>Staging area</b> and saves a snapshot into your <b>Local repo</b> (your project's history on your computer).</p>
         <p><b>When to use it:</b> When you are ready to record a checkpoint of your work, with a message describing what you did.</p>
         <p><b>Think of it as:</b> Taking a photo of the items in your shopping basket and storing that photo.</p>
       </section>
       <section class="cs-sec">
-        <h2>3. <code>git push</code></h2>
+        <h2>4. <code>git push</code></h2>
         <p><b>What it does:</b> Sends your local commits (the snapshots) up to <b>GitHub</b>, when that is your remote (the shared online copy).</p>
         <p><b>When to use it:</b> When you want to back up your committed work online or share it with others.</p>
         <p><b>Think of it as:</b> Uploading those photos to the cloud.</p>
@@ -322,6 +341,7 @@ git push</code></pre>
       <section class="cs-sec">
         <h2>Quick summary of the flow</h2>
         <ol>
+          <li><code>git status</code> (check what changed and what is staged).</li>
           <li>Edit files &rarr; <code>git add</code> (put in basket).</li>
           <li><code>git commit</code> (take a photo / save snapshot).</li>
           <li><code>git push</code> (upload the photos to GitHub).</li>

@@ -59,8 +59,8 @@ Open **Cheat sheets** in the top bar.
 
 - **Commands:** every command from the sandbox with what it does and when to use it, plus golden rules and common errors. Use **Print** for a clean black-and-white copy.
 - **Which GitHub account am I using?** A one-page guide to checking the account used for commits, for pushing, and for Copilot chat in VS Code. The image is also at [`assets/github-account-cheatsheet.png`](assets/github-account-cheatsheet.png).
-- **Switch GitHub accounts:** a printable PowerShell quick reference for checking and switching logins, clearing token overrides, adding accounts, configuring HTTPS Git credentials, and troubleshooting repository access. Includes a pre-push checklist and the distinction between login, remote URL and commit author.
-- **Add, commit & push:** a beginner-friendly explanation of what each command does, when to use it, and the shopping-basket/photo analogy, followed by a three-step flow summary.
+- **Switch GitHub accounts:** a printable PowerShell quick reference for checking and switching logins, clearing token overrides, adding accounts, configuring HTTPS Git credentials, and troubleshooting repository access. Starts with a simple check, switch, connect Git, verify and push sequence. Includes a pre-push checklist and the distinction between login, remote URL and commit author.
+- **Add, commit & push:** a beginner-friendly explanation of status, add, commit and push, when to use each, and the shopping-basket/photo analogy. Includes the four-step sequence: check, stage, save, upload.
 
 ## Project structure
 
